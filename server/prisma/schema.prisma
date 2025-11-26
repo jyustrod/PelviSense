@@ -1,0 +1,73 @@
+// Prisma Schema para UROLF
+// Base de datos: SQLite
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Usuario
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  age       Int?
+  gender    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions  Session[]
+  progress  Progress[]
+}
+
+// Sesión de ejercicio
+model Session {
+  id               String   @id @default(uuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+
+  type             String   // "standard" | "game"
+  exerciseName     String?
+  duration         Int      // segundos
+  contractions     Int      @default(0)
+  score            Int?     // Para modo juego
+
+  // AI Posture Tracking
+  aiEnabled        Boolean  @default(false)
+  postureWarnings  Int      @default(0)
+  averageStability Float?
+
+  // Métricas
+  maxStrength      Float?
+  avgStrength      Float?
+  consistency      Float?
+
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Progreso del usuario
+model Progress {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+
+  date            DateTime @default(now())
+  totalSessions   Int      @default(0)
+  totalDuration   Int      @default(0) // minutos
+  streak          Int      @default(0) // días consecutivos
+  highScore       Int?     // Para juego
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+

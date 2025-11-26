@@ -1,0 +1,11 @@
+{
+  "name": "urolf-pelvic-rehab",
+  "version": "1.0.0",
+  "description": "Advanced Pelvic Floor Rehabilitation PWA with AI Computer Vision",
+  "private": true,
+  "scripts": {
+    "install:all": "cd client && npm install && cd ../server && npm install",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev"
+  }
+}
